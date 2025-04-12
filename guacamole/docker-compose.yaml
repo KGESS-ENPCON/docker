@@ -1,0 +1,5 @@
+# docker compose file
+- mariadb
+- guacamole server
+- guacamole client & web server
+- proxy for https
