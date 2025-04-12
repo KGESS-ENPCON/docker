@@ -3,3 +3,29 @@
 - guacamole server
 - guacamole client & web server
 - proxy for https
+
+
+services:
+  mariadb:
+    image: "mariadb"
+    networks:
+      - test
+    secrets:
+      - mariadbuserpasswd
+  guacd:
+    image: ""
+    ports:
+      - "8080:8080"
+  guacamole:
+    image: ""
+  webproxy:
+    image: "nginx"
+
+
+secrets:
+  mariadbuserpasswd:
+    external: true
+
+
+networks:
+  test: {}
