@@ -1,0 +1,49 @@
+networks:
+  forgejo:
+    external: false
+
+services:
+  forgejo-0001:
+    image: codeberg.org/forgejo/forgejo:10
+    container_name: forgejo-0001
+    environment:
+      - USER_UID=1000
+      - USER_GID=1000
+      - FORGEJO__repository__ENABLE_PUSH_CREATE_USER=true
+      - FORGEJO__repository__ENABLE_PUSH_CREATE_ORG=true
+      - FORGEJO__database__DB_TYPE=postgres
+      - FORGEJO__database__HOST=postgres-0001:5432
+      - FORGEJO__database__NAME=forgejo
+      - FORGEJO__database__USER=forgejo
+      - FORGEJO__database__PASSWD=$DBPASSWORD
+      - FORGEJO__server__DOMAIN=forgejo.cloudopn.net
+      - FORGEJO__server__PROTOCOL=https
+      - FORGEJO__server__ENABLE_ACME=true
+      - FORGEJO__server__ACME_ACCEPTTOS=true
+      - FORGEJO__server__HTTP_PORT=443
+    restart: always
+    networks:
+      - forgejo
+    volumes:
+      - ./forgejo:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - '80:80'
+      - '222:22'
+      - '443:443'
+    depends_on:
+      - postgres-0001
+
+  postgres-0001:
+    image: postgres:14
+    container_name: postgres-0001
+    restart: always
+    environment:
+      - POSTGRES_USER=forgejo
+      - POSTGRES_PASSWORD=$DBPASSWORD
+      - POSTGRES_DB=forgejo
+    networks:
+      - forgejo
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
